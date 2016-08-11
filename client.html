@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+	<body>
+	<div class="body">
+		<div class="container">
+			<header>
+				<button onclick="stop();">stop</button>
+			</header>
+			<main>
+				<div id="result" style="width:640px;height:320px;background-color:#ffffcc"></div>
+				<div id="ev1" style="width:640px;height:320px;background-color:#ccffcc"></div>
+				<div id="ev2" style="width:640px;height:320px;background-color:#ccccff"></div>
+			</main>
+		</div>
+		
+	</div>
+		<script>
+			var source = new EventSource("serverside.php");
+			
+			source.onmessage = function(event) {
+				console.log('new message, msg type', typeof(event.data));
+				document.getElementById("result").innerHTML += event.data + "<br>";
+			};
+			source.addEventListener('myEvent_1', function(event){
+				var obj = JSON.parse(event.data.split('\n')[1]);
+				document.getElementById("ev1").innerHTML += obj.username+" : "+obj.status+"<br>";
+			}, false)
+			source.addEventListener('myEvent_2', function(event){
+				
+				var obj = JSON.parse(event.data.split('\n')[1]);
+				document.getElementById("ev2").innerHTML += obj.title +" : "+obj.msg+"<br>";
+			}, false)
+			function stop(){
+				source.close();
+			}
+		</script>
+	</body>
+</html>
